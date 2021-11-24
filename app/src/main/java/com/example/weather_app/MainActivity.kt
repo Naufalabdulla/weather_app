@@ -3,12 +3,14 @@ package com.example.weather_app
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.weather_app.network.Config
 import com.example.weather_app.network.WeatherModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -17,6 +19,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.fragment)
 
         bottomNavigationView.setupWithNavController(navController)
-
         fragmentStart()
 
     }
@@ -40,6 +43,14 @@ class MainActivity : AppCompatActivity() {
         val textLoc : TextView = findViewById(R.id.loc)
         val textStat : TextView = findViewById(R.id.status)
         val textTemp : TextView = findViewById(R.id.temp)
+        val date : TextView = findViewById(R.id.date)
+        val textHumid : TextView = findViewById(R.id.humid)
+        val imgStat : ImageView = findViewById(R.id.statImg)
+
+        val sdf = SimpleDateFormat("dd/M/yyyy")
+        val currentDate = sdf.format(Date())
+
+        date.text = currentDate.toString()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -61,6 +72,13 @@ class MainActivity : AppCompatActivity() {
                     textLoc.text = call1?.name
                     textStat.text = call1?.weather?.get(0)?.main
                     textTemp.text = suhu.toString().substringBefore(".") + "°C"
+                    textHumid.text = call1?.main?.humidity.toString() + "%"
+
+                    Glide
+                        .with(this@MainActivity)
+                        .load("https://openweathermap.org/img/wn/${call1?.weather?.get(0)?.icon}@4x.png")
+                        .into(imgStat)
+
                 }
 
                 override fun onFailure(call: Call<WeatherModel>, t: Throwable) {
