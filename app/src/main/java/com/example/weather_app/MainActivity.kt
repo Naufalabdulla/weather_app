@@ -10,8 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weather_app.network.Config
+import com.example.weather_app.network.EarthquakeModel
 import com.example.weather_app.network.WeatherModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -24,8 +27,14 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
+    val dataTanggal = arrayListOf<String>()
+    val dataJam = arrayListOf<String>()
+    val dataMagnitude = arrayListOf<String>()
+    val dataLokasi = arrayListOf<String>()
+    val dataDirasakan = arrayListOf<String>()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +46,33 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navController)
         fragmentStart()
 
+    }
+
+    fun fragmentGempaStart(){
+        recyclerView = findViewById(R.id.rv_earthquake)
+
+        Config().getGempaService().getModelEarthquake().enqueue(object : Callback<EarthquakeModel>{
+            override fun onResponse(call: Call<EarthquakeModel>, response: Response<EarthquakeModel>) {
+                val call1 = response.body()?.infogempa?.gempa
+
+                for(list in call1!!.indices){
+                    dataTanggal.add(call1[list]?.tanggal.toString())
+                    dataJam.add(call1[list]?.jam.toString())
+                    dataMagnitude.add(call1[list]?.magnitude.toString())
+                    dataLokasi.add(call1[list]?.wilayah.toString())
+                    dataDirasakan.add(call1[list]?.dirasakan.toString())
+
+                    recyclerView.adapter = EarthquakeAdapter(dataTanggal,dataJam,dataMagnitude,dataLokasi,dataDirasakan)
+                    recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+                    recyclerView.setHasFixedSize(true)
+                }
+            }
+
+            override fun onFailure(call: Call<EarthquakeModel>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "$t", Toast.LENGTH_LONG ).show()
+            }
+
+        })
     }
 
     fun fragmentStart(){

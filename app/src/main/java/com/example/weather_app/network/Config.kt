@@ -14,7 +14,15 @@ class Config {
             .build()
     }
 
+    fun getRetrofitBmkg() : Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://data.bmkg.go.id/DataMKG/TEWS/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
     fun getService() = getRetrofit().create(ModelWeather::class.java)
+    fun getGempaService() = getRetrofitBmkg().create(ModelEarthquake::class.java)
 
 
 }
@@ -24,4 +32,9 @@ interface ModelWeather {
     fun getModelWeather(@Query("lat") lat:String,
                         @Query("lon") lon:String,
                         @Query("appid") appid:String): Call<WeatherModel>
+}
+
+interface ModelEarthquake {
+    @GET("gempadirasakan.json")
+    fun getModelEarthquake():Call<EarthquakeModel>
 }
