@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -21,6 +23,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -57,6 +60,24 @@ class MainActivity : AppCompatActivity() {
         a.addCategory(Intent.CATEGORY_HOME)
         a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(a)
+    }
+
+    fun searchOnClickListener(){
+        val btnSearch = findViewById<Button>(R.id.btn_search)
+        val searchTxt = findViewById<TextInputEditText>(R.id.txt_src)
+
+        btnSearch.setOnClickListener {
+            val query = searchTxt.getText().toString()
+
+            if(query == ""){
+                Toast.makeText(this, "Search field must be filled", Toast.LENGTH_SHORT).show()
+            }else{
+                startActivity(Intent(this, DetailActivity::class.java).apply {
+                    putExtra("QUERY", query)
+                })
+            }
+
+        }
     }
 
     fun profileOnClickListener(){
