@@ -22,6 +22,7 @@ class Config {
     }
 
     fun getService() = getRetrofit().create(ModelWeather::class.java)
+    fun getServiceDetail() = getRetrofit().create(ModelDetail::class.java)
     fun getGempaService() = getRetrofitBmkg().create(ModelEarthquake::class.java)
 
 
@@ -34,7 +35,13 @@ interface ModelWeather {
                         @Query("appid") appid:String): Call<WeatherModel>
 }
 
+interface ModelDetail {
+    @GET("weather")
+    fun getModelDetail(@Query("q") q: String?,
+                       @Query("appid") appid: String): Call<WeatherModel>
+}
+
 interface ModelEarthquake {
     @GET("gempadirasakan.json")
-    fun getModelEarthquake():Call<EarthquakeModel>
+    fun getModelEarthquake(): Call<EarthquakeModel>
 }
