@@ -36,7 +36,7 @@ class DetailActivity : AppCompatActivity() {
         date.text = currentDate.toString()
 
         backBtn.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            onBackPressed()
         }
 
 
